@@ -1,6 +1,6 @@
 name:                scotty-format
 version:             0.1.0.0
-synopsis:            Response format helper for Scotty web framework.
+synopsis:            Response format helper for the Scotty web framework.
 description:         Please see README.md
 homepage:            https://github.com/potomak/scotty-format#readme
 license:             BSD3
