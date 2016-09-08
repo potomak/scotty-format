@@ -1,47 +1,61 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Web.Scotty.Format.Trans (
-  format,
-  html,
-  text,
-  json
+  respondTo,
+  formatHtml,
+  formatText,
+  formatJson,
+  format
 ) where
 
 import Control.Monad (liftM, ap)
 import Data.Maybe (fromMaybe)
 import Data.Monoid ((<>))
-import Data.Text.Lazy (Text, toLower)
+import Data.Text.Lazy (toStrict)
+import Data.Text.Encoding (encodeUtf8)
+import Network.HTTP.Media (MediaType, mapAcceptMedia)
 import Network.HTTP.Types (notAcceptable406)
 import Web.Scotty.Trans (ActionT, ScottyError, status, header)
 
 
-format :: (ScottyError e, Monad m) => ResponseFormat e m () -> ActionT e m ()
-format (RF [] _) =
-  status notAcceptable406
-format (RF allFormats@((_, defaultAction) : _) ()) = do
-    accept <- fmap toLower <$> header "Accept"
-    maybe defaultAction (fromMaybe defaultAction . lookupFormat) accept
+respondTo :: (ScottyError e, Monad m)
+  => ResponseFormat e m ()
+  -> ActionT e m ()
+respondTo (RF preferences ()) = do
+    mAccept <- fmap (encodeUtf8 . toStrict) <$> header "Accept"
+    maybe notAcceptable (fromMaybe notAcceptable . mapAcceptMedia preferences) mAccept
   where
-    lookupFormat = (`lookup` allFormats)
+    notAcceptable = status notAcceptable406
 
 
-html :: (ScottyError e, Monad m) => ActionT e m () -> ResponseFormat e m ()
-html action = RF [("text/html", action)] ()
+formatHtml :: (ScottyError e, Monad m)
+  => ActionT e m ()
+  -> ResponseFormat e m ()
+formatHtml = format "text/html"
 
 
-text :: (ScottyError e, Monad m) => ActionT e m () -> ResponseFormat e m ()
-text action = RF [("text/plain", action)] ()
+formatText :: (ScottyError e, Monad m)
+  => ActionT e m ()
+  -> ResponseFormat e m ()
+formatText = format "text/plain"
 
 
-json :: (ScottyError e, Monad m) => ActionT e m () -> ResponseFormat e m ()
-json action = RF [("application/json", action)] ()
+formatJson :: (ScottyError e, Monad m)
+  => ActionT e m ()
+  -> ResponseFormat e m ()
+formatJson = format "application/json"
+
+
+format :: (ScottyError e, Monad m)
+  => MediaType
+  -> ActionT e m ()
+  -> ResponseFormat e m ()
+format mediaType action = RF [(mediaType, action)] ()
 
 
 -- Private
 
-type Format = Text
-
-data ResponseFormat e m a = RF [(Format, ActionT e m ())] a
+data ResponseFormat e m a = RF [(MediaType, ActionT e m ())] a
 
 instance Monad (ResponseFormat e m) where
   return = RF []

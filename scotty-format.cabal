@@ -20,6 +20,7 @@ library
   build-depends:
     aeson,
     base >= 4.7 && < 5,
+    http-media,
     http-types,
     scotty >= 0.10 && < 0.12,
     text

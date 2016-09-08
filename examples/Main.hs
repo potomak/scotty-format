@@ -5,19 +5,20 @@ module Main (main) where
 import Data.Aeson (object, (.=))
 import Web.Scotty (scotty, get, json, text)
 
-import Web.Scotty.Format.Trans (format)
-import qualified Web.Scotty.Format.Trans as Format
+import Web.Scotty.Format.Trans (respondTo, formatJson, formatText, format)
 
 
 main :: IO ()
 main = scotty 8080 $ do
   get "/hello" $ do
     let content = "Hello world!"
-    format $ do
-      Format.json $
+    respondTo $ do
+      formatJson $
         json $ object ["content" .= content]
-      Format.text $
+      formatText $
         text content
+      format "application/vnd.chess-pgn" $
+        text "1. e4"
 
   get "/error" $
-    format $ return ()
+    respondTo $ return ()
