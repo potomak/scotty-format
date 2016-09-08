@@ -22,10 +22,8 @@ respondTo :: (ScottyError e, Monad m)
   => ResponseFormat e m ()
   -> ActionT e m ()
 respondTo (RF preferences ()) = do
-    mAccept <- fmap (encodeUtf8 . toStrict) <$> header "Accept"
-    maybe notAcceptable (fromMaybe notAcceptable . mapAcceptMedia preferences) mAccept
-  where
-    notAcceptable = status notAcceptable406
+  accept <- maybe "*/*" (encodeUtf8 . toStrict) <$> header "Accept"
+  fromMaybe (status notAcceptable406) (mapAcceptMedia preferences accept)
 
 
 formatHtml :: (ScottyError e, Monad m)
