@@ -3,7 +3,7 @@ version:             0.1.0.0
 synopsis:            Response format helper for the Scotty web framework.
 description:         Please see README.md
 homepage:            https://github.com/potomak/scotty-format#readme
-license:             BSD3
+license:             Apache-2.0
 license-file:        LICENSE
 author:              Giovanni Cappellotto
 maintainer:          potomak84@gmail.com
