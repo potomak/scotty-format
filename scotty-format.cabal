@@ -1,7 +1,9 @@
 name:                scotty-format
 version:             0.1.0.1
 synopsis:            Response format helper for the Scotty web framework.
-description:         Please see README.md
+description:
+  scotty-format is a helper for the Scotty web framework that helps you defining
+  different response formats based on the request's `Accept` header value.
 homepage:            https://github.com/potomak/scotty-format#readme
 license:             Apache-2.0
 license-file:        LICENSE
