@@ -5,7 +5,8 @@ module Web.Scotty.Format.Trans (
   formatHtml,
   formatText,
   formatJson,
-  format
+  format,
+  ResponseFormat,
 ) where
 
 import Control.Monad (liftM, ap)
@@ -51,9 +52,9 @@ format :: (ScottyError e, Monad m)
 format mediaType action = RF [(mediaType, action)] ()
 
 
--- Private
-
 data ResponseFormat e m a = RF [(MediaType, ActionT e m ())] a
+
+-- Private
 
 instance Monad (ResponseFormat e m) where
   return = RF []

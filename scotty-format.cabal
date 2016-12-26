@@ -1,5 +1,5 @@
 name:                scotty-format
-version:             0.1.0.2
+version:             0.1.1.0
 synopsis:            Response format helper for the Scotty web framework.
 description:
   scotty-format is a helper for the Scotty web framework that helps you defining
